@@ -11,7 +11,9 @@ import java.util.List;
 
 @Entity
 @Table(name = "warehouse", indexes = {
-        @Index(name = "idx_warehouse_location", columnList = "city, country")
+        @Index(name = "idx_warehouse_location", columnList = "city, country"),
+        @Index(name = "idx_warehouse_code", columnList = "code"),
+        @Index(name = "idx_warehouse_active", columnList = "is_active"),
 })
 @Cacheable
 @Getter

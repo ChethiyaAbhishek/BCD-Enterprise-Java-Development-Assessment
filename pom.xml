@@ -23,7 +23,6 @@
         <jakartaee.api.version>10.0.0</jakartaee.api.version>
         <activemq.all.version>6.2.6</activemq.all.version>
         <log4j.core.version>2.25.4</log4j.core.version>
-        <hibernate.version>6.4.4.Final</hibernate.version>
         <mysql.connector.version>8.0.33</mysql.connector.version>
         <lombok.version>1.18.42</lombok.version>
     </properties>
@@ -75,13 +74,6 @@
                 <groupId>org.apache.logging.log4j</groupId>
                 <artifactId>log4j-core</artifactId>
                 <version>${log4j.core.version}</version>
-            </dependency>
-
-            <dependency>
-                <groupId>org.hibernate.orm</groupId>
-                <artifactId>hibernate-core</artifactId>
-                <version>${hibernate.version}</version>
-                <scope>provided</scope>
             </dependency>
 
             <dependency>

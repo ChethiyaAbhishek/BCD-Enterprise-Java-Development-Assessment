@@ -49,6 +49,7 @@
                 <version>3.3.0</version>
                 <configuration>
                     <defaultLibBundleDir>lib</defaultLibBundleDir>
+                    <generateApplicationXml>true</generateApplicationXml>
                     <modules>
                         <jarModule>
                             <groupId>com.techmart</groupId>

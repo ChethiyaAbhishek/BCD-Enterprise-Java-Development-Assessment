@@ -24,6 +24,12 @@
             <groupId>jakarta.platform</groupId>
             <artifactId>jakarta.jakartaee-web-api</artifactId>
         </dependency>
+
+        <dependency>
+            <groupId>com.techmart</groupId>
+            <artifactId>techmart-ejb</artifactId>
+            <type>ejb</type>
+        </dependency>
     </dependencies>
 
     <build>
