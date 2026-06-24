@@ -1,10 +1,9 @@
 package com.techmart.common.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.io.Serializable;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.time.LocalDateTime;
@@ -19,8 +18,10 @@ import java.time.LocalDateTime;
 })
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
-public class InventoryBatch {
+@AllArgsConstructor
+public class InventoryBatch implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -45,6 +46,7 @@ public class InventoryBatch {
     @Column(name = "available_quantity", nullable = false)
     private Integer availableQuantity;
 
+    @Builder.Default
     @Column(name = "reserved_quantity", nullable = false)
     private Integer reservedQuantity = 0;
 
@@ -70,5 +72,35 @@ public class InventoryBatch {
 
     public boolean canFulfill(int quantity) {
         return availableQuantity >= quantity;
+    }
+
+    public synchronized void reserve(int quantity) {
+        if (availableQuantity < quantity) {
+            throw new IllegalStateException(
+                    "Cannot reserve " + quantity + " units. Only " + availableQuantity + " available in batch " + batchNumber
+            );
+        }
+        this.reservedQuantity += quantity;
+        this.availableQuantity -= quantity;
+    }
+
+    public synchronized void confirmReservation(int quantity) {
+        if (reservedQuantity < quantity) {
+            throw new IllegalStateException(
+                    "Cannot confirm " + quantity + " units. Only " + reservedQuantity + " reserved in batch " + batchNumber
+            );
+        }
+        this.receivedQuantity -= quantity;
+        this.reservedQuantity -= quantity;
+    }
+
+    public synchronized void releaseReservation(int quantity) {
+        if (reservedQuantity < quantity) {
+            throw new IllegalStateException(
+                    "Cannot release " + quantity + " units. Only " + reservedQuantity + " reserved in batch " + batchNumber
+            );
+        }
+        this.reservedQuantity -= quantity;
+        this.availableQuantity += quantity;
     }
 }

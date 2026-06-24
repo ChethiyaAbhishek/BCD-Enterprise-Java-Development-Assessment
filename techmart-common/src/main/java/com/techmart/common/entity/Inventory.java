@@ -1,10 +1,9 @@
 package com.techmart.common.entity;
 
 import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 
+import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
@@ -19,8 +18,10 @@ import java.util.List;
 @Cacheable
 @Getter
 @Setter
+@Builder
 @NoArgsConstructor
-public class Inventory {
+@AllArgsConstructor
+public class Inventory implements Serializable {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -34,12 +35,15 @@ public class Inventory {
     @JoinColumn(name = "warehouse_id", nullable = false)
     private Warehouse warehouse;
 
+    @Builder.Default
     @Column(nullable = false)
     private Integer quantity = 0;
 
+    @Builder.Default
     @Column(name = "reserved_quantity", nullable = false)
     private Integer reservedQuantity = 0;
 
+    @Builder.Default
     @Column(name = "reorder_level")
     private Integer reorderLevel = 20;
 
@@ -66,6 +70,28 @@ public class Inventory {
 
     public boolean isOutOfStock() {
         return getAvailableQuantity() <= 0;
+    }
+
+    public synchronized void reserve(int quantity) {
+        if (getAvailableQuantity() < quantity) {
+            throw new IllegalStateException("Insufficient aggregate stock");
+        }
+        this.reservedQuantity += quantity;
+    }
+
+    public synchronized void confirmReservation(int quantity) {
+        if (reservedQuantity < quantity) {
+            throw new IllegalStateException("Cannot confirm more than reserved");
+        }
+        this.quantity -= quantity;
+        this.reservedQuantity -= quantity;
+    }
+
+    public synchronized void releaseReservation(int quantity) {
+        if (reservedQuantity < quantity) {
+            throw new IllegalStateException("Cannot release more than reserved");
+        }
+        this.reservedQuantity -= quantity;
     }
 
     public void recalculateFromBatches() {
