@@ -7,12 +7,12 @@ import com.techmart.common.entity.*;
 import com.techmart.common.enums.OrderStatus;
 import com.techmart.ejb.dao.OrderDAO;
 import com.techmart.ejb.dao.OrderItemAllocationDAO;
+import com.techmart.ejb.jms.JMSConfigurationConstants;
 import com.techmart.ejb.session.singleton.InventoryManagerBean;
 import jakarta.annotation.Resource;
 import jakarta.ejb.*;
 import jakarta.inject.Inject;
 import jakarta.jms.JMSContext;
-import jakarta.jms.JMSException;
 import jakarta.jms.Queue;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
@@ -45,8 +45,8 @@ public class OrderProcessingBean {
     @Inject
     private JMSContext jmsContext;
 
-//    @Resource(lookup = "jms/OrderQueue")
-//    private Queue orderQueue;
+    @Resource(lookup = JMSConfigurationConstants.ORDER_QUEUE)
+    private Queue orderQueue;
 
     /**
      * Processes checkout: Creates order, reserves inventory, creates allocations,
@@ -128,7 +128,7 @@ public class OrderProcessingBean {
 
 
     private void sendOrderToQueue(Order order) {
-//        jmsContext.createProducer().send(orderQueue, mapToOrderDTO(order));
+        jmsContext.createProducer().send(orderQueue, mapToOrderDTO(order));
     }
 
     private OrderDTO mapToOrderDTO(Order order) {

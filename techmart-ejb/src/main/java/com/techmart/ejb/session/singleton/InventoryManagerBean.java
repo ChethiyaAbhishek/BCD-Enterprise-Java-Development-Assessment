@@ -4,18 +4,18 @@ import com.techmart.common.dto.AllocationResult;
 import com.techmart.common.dto.InventoryUpdateDTO;
 import com.techmart.common.entity.*;
 import com.techmart.common.exception.InsufficientStockException;
+import com.techmart.ejb.jms.JMSConfigurationConstants;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
 import jakarta.ejb.*;
 import jakarta.inject.Inject;
-import jakarta.jms.JMSContext;
-import jakarta.jms.JMSException;
-import jakarta.jms.Queue;
-import jakarta.jms.Topic;
+import jakarta.jms.*;
 import jakarta.persistence.EntityManager;
 import jakarta.persistence.PersistenceContext;
 import jakarta.persistence.TypedQuery;
+import lombok.extern.java.Log;
 
+import java.lang.IllegalStateException;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -27,6 +27,7 @@ import java.util.stream.Collectors;
 @Singleton
 @Startup
 @Lock(LockType.READ)
+@Log
 public class InventoryManagerBean {
 
     @PersistenceContext(unitName = "techmartPU")
@@ -34,12 +35,12 @@ public class InventoryManagerBean {
 
     @Inject
     private JMSContext jmsContext;
-//
-//    @Resource(lookup = "")
-//    private Topic inventoryUpdateTopic;
-//
-//    @Resource(lookup = " ")
-//    private Queue inventoryUpdateQueue;
+
+    @Resource(lookup = JMSConfigurationConstants.NOTIFICATION_TOPIC)
+    private Topic notificationTopic;
+
+    @Resource(lookup = JMSConfigurationConstants.INVENTORY_QUEUE)
+    private Queue inventoryQueue;
 
     /**
      * Using ConcurrentHashMap to ensure thread-safety for global cache
@@ -156,45 +157,45 @@ public class InventoryManagerBean {
     @Lock(LockType.WRITE)
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void confirmReservation(Long productId, Long warehouseId, int quantity) {
-        Inventory inventory = findInventory(productId, warehouseId);
-        if (inventory == null) {
-            throw new IllegalStateException("Inventory not found for product " + productId + " at warehouse " + warehouseId);
-        }
-
-        inventory.confirmReservation(quantity);
-        entityManager.merge(inventory);
-
-        // ✅ Update BATCH: receivedQuantity -= qty, reservedQuantity -= qty
-        // Find the batches that have reservations for this product at this warehouse
-        List<InventoryBatch> reservedBatches = entityManager.createQuery(
-                        "SELECT b FROM InventoryBatch b " +
-                                "WHERE b.inventory.id = :invId AND b.reservedQuantity > 0 " +
-                                "ORDER BY b.costPrice ASC, b.receivedDate ASC",
-                        InventoryBatch.class)
-                .setParameter("invId", inventory.getId())
-                .getResultList();
-
-        int remainingToConfirm = quantity;
-        for (InventoryBatch batch : reservedBatches) {
-            if (remainingToConfirm <= 0) break;
-
-            int confirmFromBatch = Math.min(batch.getReservedQuantity(), remainingToConfirm);
-            batch.confirmReservation(confirmFromBatch);
-            entityManager.merge(batch);
-            remainingToConfirm -= confirmFromBatch;
-        }
-
-        if (remainingToConfirm > 0) {
-            throw new IllegalStateException(
-                    "Could not confirm full quantity. Remaining: " + remainingToConfirm
-            );
-        }
-
-        // Update cache
-        updateCache(productId, warehouseId, inventory.getAvailableQuantity());
-
-        // Publish JMS event
-        publishInventoryUpdate(productId, warehouseId, -quantity, "ORDER_CONFIRMED", null);
+//        Inventory inventory = findInventory(productId, warehouseId);
+//        if (inventory == null) {
+//            throw new IllegalStateException("Inventory not found for product " + productId + " at warehouse " + warehouseId);
+//        }
+//
+//        inventory.confirmReservation(quantity);
+//        entityManager.merge(inventory);
+//
+//        // ✅ Update BATCH: receivedQuantity -= qty, reservedQuantity -= qty
+//        // Find the batches that have reservations for this product at this warehouse
+//        List<InventoryBatch> reservedBatches = entityManager.createQuery(
+//                        "SELECT b FROM InventoryBatch b " +
+//                                "WHERE b.inventory.id = :invId AND b.reservedQuantity > 0 " +
+//                                "ORDER BY b.costPrice ASC, b.receivedDate ASC",
+//                        InventoryBatch.class)
+//                .setParameter("invId", inventory.getId())
+//                .getResultList();
+//
+//        int remainingToConfirm = quantity;
+//        for (InventoryBatch batch : reservedBatches) {
+//            if (remainingToConfirm <= 0) break;
+//
+//            int confirmFromBatch = Math.min(batch.getReservedQuantity(), remainingToConfirm);
+//            batch.confirmReservation(confirmFromBatch);
+//            entityManager.merge(batch);
+//            remainingToConfirm -= confirmFromBatch;
+//        }
+//
+//        if (remainingToConfirm > 0) {
+//            throw new IllegalStateException(
+//                    "Could not confirm full quantity. Remaining: " + remainingToConfirm
+//            );
+//        }
+//
+//        // Update cache
+//        updateCache(productId, warehouseId, inventory.getAvailableQuantity());
+//
+//        // Publish JMS event
+//        publishInventoryUpdate(productId, warehouseId, -quantity, "ORDER_CONFIRMED", null);
     }
 
     @Lock(LockType.WRITE)
@@ -315,22 +316,18 @@ public class InventoryManagerBean {
 
     private void publishInventoryUpdate(Long productId, Long warehouseId,
                                         int changeAmount, String reason, String batchNumber) {
-//        try {
+        try {
             InventoryUpdateDTO dto = new InventoryUpdateDTO(
                     productId, warehouseId, changeAmount, reason, batchNumber
             );
 
-            //TODO: CHECK
-            //Send to Queue for guaranteed processing (e.g., updating external ERP)
-//            jmsContext.createProducer().send(inventoryUpdateQueue, dto);
+            jmsContext.createProducer().send(inventoryQueue, dto);
 
-            // Publish to Topic for real-time dashboard/notifications
-//            jmsContext.createProducer().send(inventoryUpdateTopic, dto);
+            jmsContext.createProducer().send(notificationTopic, dto);
 
-//        } catch (JMSException e) {
-////            log.severe("Failed to publish inventory update: " + e.getMessage());
-//            System.out.println("Failed to publish inventory update: " + e.getMessage());
-//        }
+        } catch (JMSRuntimeException e) {
+            log.severe("Failed to publish inventory update: " + e.getMessage());
+        }
     }
 
 }
