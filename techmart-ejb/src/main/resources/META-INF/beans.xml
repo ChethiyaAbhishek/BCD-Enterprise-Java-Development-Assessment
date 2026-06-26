@@ -1,12 +1,13 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <beans xmlns="https://jakarta.ee/xml/ns/jakartaee"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
-       xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd"
+       xsi:schemaLocation="https://jakarta.ee/xml/ns/jakartaee
+       https://jakarta.ee/xml/ns/jakartaee/beans_4_0.xsd"
        version="4.0"
        bean-discovery-mode="annotated">
-<!--    <interceptors>-->
+
+    <interceptors>
+        <class>com.techmart.ejb.interceptor.AsyncExceptionHandler</class>
 <!--        <class>com.techmart.ejb.interceptor.PerformanceMonitorInterceptor</class>-->
-<!--        <class>com.techmart.ejb.interceptor.LoggingInterceptor</class>-->
-<!--        <class>com.techmart.ejb.interceptor.RetryInterceptor</class>-->
-<!--    </interceptors>-->
+    </interceptors>
 </beans>

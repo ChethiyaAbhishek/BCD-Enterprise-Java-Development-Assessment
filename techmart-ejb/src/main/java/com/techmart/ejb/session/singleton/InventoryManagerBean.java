@@ -4,6 +4,7 @@ import com.techmart.common.dto.AllocationResult;
 import com.techmart.common.dto.InventoryUpdateDTO;
 import com.techmart.common.entity.*;
 import com.techmart.common.exception.InsufficientStockException;
+import com.techmart.ejb.interceptor.PerformanceMonitored;
 import com.techmart.ejb.jms.JMSConfigurationConstants;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.Resource;
@@ -27,6 +28,7 @@ import java.util.stream.Collectors;
 @Singleton
 @Startup
 @Lock(LockType.READ)
+@PerformanceMonitored
 @Log
 public class InventoryManagerBean {
 
@@ -59,6 +61,7 @@ public class InventoryManagerBean {
         loadBatchCache();
     }
 
+    @PerformanceMonitored(value = "Inventory.getStock", slowThresholdMs = 10)
     public int getAvailableStock(Long productId, Long warehouseId){
         String key = buildCacheKey(productId, warehouseId);
         return stockCache.getOrDefault(key, 0);

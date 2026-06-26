@@ -11,7 +11,7 @@ public record ProductDTO(
         BigDecimal sellingPrice,
         String categoryName,
         String imageUrl,
-        Integer totalStock,
+        Long totalStock,
         Boolean isActive
 ) implements Serializable {
 

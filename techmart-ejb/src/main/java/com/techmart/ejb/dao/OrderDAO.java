@@ -5,6 +5,7 @@ import com.techmart.common.enums.OrderStatus;
 import jakarta.ejb.Stateless;
 import jakarta.persistence.TypedQuery;
 
+import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import java.util.List;
 
@@ -59,14 +60,24 @@ public class OrderDAO extends GenericDAO<Order> {
                 .getSingleResult();
     }
 
-    public java.math.BigDecimal calculateRevenue(LocalDateTime from, LocalDateTime to) {
-        return entityManager.createQuery(
-                        "SELECT SUM(o.totalAmount) FROM Order o " +
-                                "WHERE o.createdAt BETWEEN :from AND :to AND o.status <> 'CANCELLED'",
-                        java.math.BigDecimal.class)
-                .setParameter("from", from)
-                .setParameter("to", to)
-                .getSingleResult();
+    public BigDecimal calculateRevenue(LocalDateTime startDate, LocalDateTime endDate) {
+        TypedQuery<BigDecimal> query = entityManager.createQuery(
+                "SELECT SUM(o.totalAmount) FROM Order o " +
+                        "WHERE o.createdAt BETWEEN :from AND :to " +
+                        "AND o.status IN :validStatuses",
+                BigDecimal.class);
+
+        query.setParameter("from", startDate);
+        query.setParameter("to", endDate);
+
+        query.setParameter("validStatuses", List.of(
+                OrderStatus.CONFIRMED,
+                OrderStatus.SHIPPED,
+                OrderStatus.DELIVERED
+        ));
+
+        BigDecimal result = query.getSingleResult();
+        return result != null ? result : BigDecimal.ZERO;
     }
 
     public List<Order> findRecentOrders(int limit) {

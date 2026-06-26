@@ -46,4 +46,10 @@ public class ProductDAO extends GenericDAO<Product> {
                 .setParameter("sku", sku).getResultList();
         return results.isEmpty() ? null : results.get(0);
     }
+
+    public long count() {
+        TypedQuery<Long> query = entityManager.createQuery(
+                "SELECT COUNT(p) FROM Product p", Long.class);
+        return query.getSingleResult();
+    }
 }

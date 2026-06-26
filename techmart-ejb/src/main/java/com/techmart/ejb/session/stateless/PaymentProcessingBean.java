@@ -1,7 +1,9 @@
 package com.techmart.ejb.session.stateless;
 
 import com.techmart.common.entity.Order;
+import com.techmart.common.enums.OrderStatus;
 import com.techmart.common.enums.PaymentStatus;
+import com.techmart.ejb.async.PaymentGatewayService;
 import com.techmart.ejb.dao.OrderDAO;
 import jakarta.ejb.*;
 import jakarta.inject.Inject;
@@ -17,72 +19,46 @@ public class PaymentProcessingBean {
     @Inject
     private OrderDAO orderDAO;
 
-//    @Inject
-//    private PaymentGatewayService paymentGateway; // @Asynchronous service
+    @Inject
+    private PaymentGatewayService paymentGateway;
 
-    /**
-     * Initiate payment processing
-     * PERFORMANCE: Returns immediately to user, processes asynchronously
-     */
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void initiatePayment(Long orderId, BigDecimal amount, String cardToken) {
+    public OrderStatus initiatePayment(Long orderId, BigDecimal amount, String cardToken) {
         Order order = orderDAO.findById(orderId);
-        if (order == null) throw new IllegalArgumentException("Order not found: " + orderId);
+        if (order == null) throw new IllegalArgumentException("Order not found");
 
-        if (order.getPaymentStatus() == PaymentStatus.COMPLETED) {
-            log.warning("Payment already completed for order: " + orderId);
-            return;
-        }
-
+        order.setStatus(OrderStatus.PROCESSING);
         order.setPaymentStatus(PaymentStatus.PENDING);
         orderDAO.update(order);
 
-//        paymentGateway.processPaymentAsync(orderId, amount, cardToken);
-        log.info("Payment initiated for order: " + orderId);
+        paymentGateway.processPaymentAsync(orderId, amount, cardToken);
+
+        return OrderStatus.PROCESSING;
     }
 
-    /**
-     * Handle payment success callback
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void handlePaymentSuccess(Long orderId, String transactionId) {
         Order order = orderDAO.findById(orderId);
-        if (order == null) throw new IllegalArgumentException("Order not found: " + orderId);
+        if (order == null) return;
 
         order.setPaymentStatus(PaymentStatus.COMPLETED);
         order.setPaymentTransactionId(transactionId);
+        order.setStatus(OrderStatus.CONFIRMED);
         orderDAO.update(order);
 
-        log.info("Payment confirmed for order: " + orderId + " TXN: " + transactionId);
+        log.info("Payment successful for Order " + orderId + " (TXN: " + transactionId + ")");
     }
 
-    /**
-     * Handle payment failure.
-     */
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
+    @TransactionAttribute(TransactionAttributeType.REQUIRES_NEW)
     public void handlePaymentFailure(Long orderId, String errorMessage) {
         Order order = orderDAO.findById(orderId);
-        if (order == null) throw new IllegalArgumentException("Order not found: " + orderId);
+        if (order == null) return;
 
         order.setPaymentStatus(PaymentStatus.FAILED);
-        order.setNotes(order.getNotes() + " Payment failed: " + errorMessage);
+        order.setStatus(OrderStatus.CANCELLED);
+        order.setNotes("Payment failed: " + errorMessage);
         orderDAO.update(order);
 
-        log.warning("Payment failed for order: " + orderId + " - " + errorMessage);
+        log.warning("Payment failed for Order " + orderId + ": " + errorMessage);
     }
-
-    /**
-     * Process refund.
-     */
-//    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-//    public void processRefund(Long orderId) {
-//        Order order = orderDAO.findById(orderId);
-//        if (order == null || order.getPaymentStatus() != PaymentStatus.COMPLETED) {
-//            throw new IllegalArgumentException("Order cannot be refunded");
-//        }
-//
-//        order.setPaymentStatus(PaymentStatus.REFUNDED);
-//        orderDAO.update(order);
-//        log.info("Refund processed for order: " + orderId);
-//    }
 }

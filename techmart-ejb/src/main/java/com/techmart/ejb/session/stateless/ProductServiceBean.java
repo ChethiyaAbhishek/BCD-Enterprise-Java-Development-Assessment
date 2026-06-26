@@ -69,7 +69,7 @@ public class ProductServiceBean {
 
 
     private ProductDTO mapToProductDTO(@NonNull Product product) {
-        Integer totalStock = inventoryDAO.calculateTotalStock(product.getId());
+        Long totalStock = inventoryDAO.calculateTotalStock(product.getId());
         String categoryName = product.getCategory() != null ? product.getCategory().getName() : "Uncategorized";
 
         return new ProductDTO(

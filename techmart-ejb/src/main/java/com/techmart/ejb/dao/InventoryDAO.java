@@ -44,13 +44,22 @@ public class InventoryDAO extends GenericDAO<Inventory> {
                 .getResultList();
     }
 
-    public Integer calculateTotalStock(Long productId) {
-        Integer result = entityManager.createQuery(
+//    public Integer calculateTotalStock(Long productId) {
+//        Integer result = entityManager.createQuery(
+//                        "SELECT SUM(i.quantity - i.reservedQuantity) FROM Inventory i " +
+//                                "WHERE i.product.id = :productId AND i.warehouse.active = true", Integer.class)
+//                .setParameter("productId", productId)
+//                .getSingleResult();
+//        return result != null ? result : 0;
+//    }
+
+    public Long calculateTotalStock(Long productId) {
+        Object result = entityManager.createQuery(
                         "SELECT SUM(i.quantity - i.reservedQuantity) FROM Inventory i " +
-                                "WHERE i.product.id = :productId AND i.warehouse.active = true", Integer.class)
+                                "WHERE i.product.id = :productId AND i.warehouse.active = true")
                 .setParameter("productId", productId)
                 .getSingleResult();
-        return result != null ? result : 0;
+        return result != null ? (Long) result : 0L;
     }
 
     public List<Inventory> findByWarehouse(Long warehouseId) {
