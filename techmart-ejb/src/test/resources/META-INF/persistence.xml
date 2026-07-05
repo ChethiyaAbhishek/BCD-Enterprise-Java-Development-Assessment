@@ -1,0 +1,62 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<persistence version="3.0"
+             xmlns="https://jakarta.ee/xml/ns/persistence"
+             xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+             xsi:schemaLocation="https://jakarta.ee/xml/ns/persistence
+        https://jakarta.ee/xml/ns/persistence/persistence_3_0.xsd">
+
+    <persistence-unit name="techmartPU" transaction-type="JTA">
+
+        <jta-data-source>jdbc/_TechmartOnline</jta-data-source>
+
+        <class>com.techmart.common.entity.Product</class>
+        <class>com.techmart.common.entity.Category</class>
+        <class>com.techmart.common.entity.Customer</class>
+        <class>com.techmart.common.entity.Warehouse</class>
+        <class>com.techmart.common.entity.Inventory</class>
+        <class>com.techmart.common.entity.InventoryBatch</class>
+        <class>com.techmart.common.entity.Order</class>
+        <class>com.techmart.common.entity.OrderItem</class>
+        <class>com.techmart.common.entity.OrderItemAllocation</class>
+
+        <exclude-unlisted-classes>true</exclude-unlisted-classes>
+
+        <shared-cache-mode>ENABLE_SELECTIVE</shared-cache-mode>
+
+        <properties>
+            <property name="eclipselink.target-database" value="MySQL"/>
+
+            <property name="jakarta.persistence.schema-generation.database.action"
+                      value="none"/>
+
+            <property name="eclipselink.logging.level" value="WARNING"/>
+            <property name="eclipselink.logging.parameters" value="false"/>
+            <property name="eclipselink.logging.timestamp" value="true"/>
+            <property name="eclipselink.logging.session" value="false"/>
+            <property name="eclipselink.logging.thread" value="false"/>
+
+            <property name="eclipselink.jdbc.batch-writing" value="JDBC"/>
+            <property name="eclipselink.jdbc.batch-writing.size" value="100"/>
+
+            <property name="eclipselink.jdbc.exclusive-connection.mode" value="Always"/>
+
+            <property name="eclipselink.cache.size.default" value="1000"/>
+            <property name="eclipselink.cache.type.default" value="SoftWeak"/>
+            <property name="eclipselink.cache.shared.default" value="true"/>
+
+            <property name="eclipselink.jdbc.fetch-size" value="100"/>
+
+            <property name="eclipselink.jdbc.cache-statements" value="true"/>
+            <property name="eclipselink.jdbc.cache-statements.size" value="100"/>
+
+            <property name="eclipselink.weaving" value="true"/>
+            <property name="eclipselink.weaving.lazy" value="true"/>
+            <property name="eclipselink.weaving.changetracking" value="true"/>
+            <property name="eclipselink.weaving.fetchgroups" value="true"/>
+
+            <property name="eclipselink.flush-clear.cache" value="DropInvalidate"/>
+
+            <property name="eclipselink.validation-only" value="false"/>
+        </properties>
+    </persistence-unit>
+</persistence>

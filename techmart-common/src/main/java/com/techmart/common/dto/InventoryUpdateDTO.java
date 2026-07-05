@@ -33,18 +33,4 @@ public record InventoryUpdateDTO(
         this(productId, null, warehouseId, null, null, null,
                 changeAmount, reason, batchNumber, LocalDateTime.now());
     }
-
-//    /**
-//     * Check if this is a stock reduction (order-related).
-//     */
-//    public boolean isStockReduction() {
-//        return changeAmount < 0;
-//    }
-//
-//    /**
-//     * Check if this is a stock increase (batch received).
-//     */
-//    public boolean isStockIncrease() {
-//        return changeAmount > 0;
-//    }
 }

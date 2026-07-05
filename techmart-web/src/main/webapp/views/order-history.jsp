@@ -28,17 +28,17 @@
 <body class="bg-light">
 <nav class="navbar navbar-dark bg-primary">
     <div class="container">
-        <a class="navbar-brand" href="products.jsp">🛒 TechMart</a>
+        <a class="navbar-brand" href="products.jsp">TechMart</a>
         <div class="navbar-nav ms-auto">
             <a class="nav-link" href="cart.jsp">Cart</a>
             <a class="nav-link active" href="order-history.jsp">My Orders</a>
-            <a class="nav-link" href="performance-dashboard.jsp">📊 Performance</a>
+            <a class="nav-link" href="performance-dashboard.jsp">Performance</a>
         </div>
     </div>
 </nav>
 
 <div class="container mt-4">
-    <h2 class="mb-4">📦 My Orders</h2>
+    <h2 class="mb-4">My Orders</h2>
 
     <div id="orders-container">
         <div class="text-center py-5">
@@ -54,7 +54,7 @@
     <div class="modal-dialog">
         <div class="modal-content">
             <div class="modal-header">
-                <h5 class="modal-title">🚚 Track Order</h5>
+                <h5 class="modal-title">Track Order</h5>
                 <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
             </div>
             <div class="modal-body">
@@ -100,7 +100,7 @@
                 const totalAmount = order.totalAmount.toLocaleString();
 
                 const trackBtn = canTrack
-                    ? '<button class="btn btn-sm btn-primary track-btn" onclick="trackOrder(\'' + orderNum + '\')">🚚 Track</button>'
+                    ? '<button class="btn btn-sm btn-primary track-btn" onclick="trackOrder(\'' + orderNum + '\')">Track</button>'
                     : '<span class="text-muted">Not shippable</span>';
 
                 return '<div class="card order-card mb-3">' +
@@ -182,11 +182,11 @@
                 '<div class="alert alert-' + statusColor + '">' +
                 '<h6>Status: <strong>' + data.status + '</strong></h6>' +
                 '<p class="mb-2"> Location: ' + escapeHtml(data.location) + '</p>' +
-                '<p class="mb-0">📅 Estimated Delivery: ' + escapeHtml(data.estimatedDelivery) + '</p>' +
+                '<p class="mb-0">Estimated Delivery: ' + escapeHtml(data.estimatedDelivery) + '</p>' +
                 '</div>' +
                 '<small class="text-muted">' +
-                '✅ Retrieved using Future&lt;T&gt; with timeout<br>' +
-                '✅ Graceful degradation if API fails' +
+                'Retrieved using Future&lt;T&gt; with timeout<br>' +
+                'Graceful degradation if API fails' +
                 '</small>' +
                 '</div>';
 
@@ -194,7 +194,7 @@
             console.error('Tracking failed:', err);
             content.innerHTML = `
                     <div class="alert alert-warning">
-                        <h6>⚠️ Tracking Unavailable</h6>
+                        <h6>Tracking Unavailable</h6>
                         <p class="mb-2">Unable to retrieve tracking information at this time.</p>
                         <small>This demonstrates the timeout/fallback behavior of Future&lt;T&gt;</small>
                     </div>

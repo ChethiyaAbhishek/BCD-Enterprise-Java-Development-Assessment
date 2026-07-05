@@ -3,6 +3,7 @@ package com.techmart.web.servlet;
 import com.techmart.common.dto.CartItemDTO;
 import com.techmart.common.dto.OrderDTO;
 import com.techmart.common.entity.Customer;
+import com.techmart.common.exception.InsufficientStockException;
 import com.techmart.ejb.session.stateless.CartManagerBean;
 import com.techmart.ejb.session.stateless.CustomerServiceBean;
 import com.techmart.ejb.session.stateless.OrderProcessingBean;
@@ -60,6 +61,12 @@ public class CheckoutServlet extends HttpServlet {
 
             resp.setContentType("application/json");
             resp.getWriter().write("{\"status\": \"SUCCESS\", \"orderId\": " + order.id() + ", \"orderNumber\": \"" + order.orderNumber() + "\"}");
+
+        } catch (InsufficientStockException e) {
+            log.warning("Checkout failed due to insufficient stock: " + e.getMessage());
+            resp.setStatus(400);
+            resp.setContentType("application/json");
+            resp.getWriter().write("{\"status\": \"FAILED\", \"message\": \"One or more items are out of stock. Please update your cart.\"}");
 
         } catch (Exception e) {
             log.severe("Checkout failed: " + e.getMessage());

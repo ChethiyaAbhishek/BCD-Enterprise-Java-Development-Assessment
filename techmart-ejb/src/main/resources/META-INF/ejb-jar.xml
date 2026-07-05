@@ -38,14 +38,4 @@
             </env-entry>
         </session>
     </enterprise-beans>
-
-    <!-- Apply performance interceptor to all beans -->
-<!--    <assembly-descriptor>-->
-<!--        <interceptor-binding>-->
-<!--            <ejb-name>*</ejb-name>-->
-<!--            <interceptor-class>-->
-<!--                com.techmart.ejb.interceptor.PerformanceMonitorInterceptor-->
-<!--            </interceptor-class>-->
-<!--        </interceptor-binding>-->
-<!--    </assembly-descriptor>-->
 </ejb-jar>

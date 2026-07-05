@@ -8,6 +8,5 @@
 
     <interceptors>
         <class>com.techmart.ejb.interceptor.AsyncExceptionHandler</class>
-<!--        <class>com.techmart.ejb.interceptor.PerformanceMonitorInterceptor</class>-->
     </interceptors>
 </beans>

@@ -86,7 +86,7 @@
 
             if (['DELIVERED', 'CANCELLED'].includes(data.status)) {
                 statusDisplay.innerHTML = '<div class="alert alert-' + color + '">' +
-                    '<h4>✅ Order ' + data.status + '</h4>' +
+                    '<h4>Order ' + data.status + '</h4>' +
                     '</div>';
                 statusDetails.classList.remove('d-none');
                 return false;

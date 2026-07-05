@@ -174,7 +174,7 @@ const MetricsPoller = (() => {
 
     function showError(message) {
         const lastUpdate = document.getElementById('last-update');
-        lastUpdate.textContent = '⚠️ ' + message;
+        lastUpdate.textContent = message;
         lastUpdate.className = 'badge bg-danger';
     }
 
@@ -183,7 +183,7 @@ const MetricsPoller = (() => {
         if (toggleBtn) {
             toggleBtn.addEventListener('click', () => {
                 const polling = MetricsPoller.toggle();
-                toggleBtn.textContent = polling ? '⏸ Pause' : '▶ Resume';
+                toggleBtn.textContent = polling ? 'Pause' : 'Resume';
                 toggleBtn.className = polling
                     ? 'btn btn-sm btn-outline-light ms-2'
                     : 'btn btn-sm btn-outline-success ms-2';

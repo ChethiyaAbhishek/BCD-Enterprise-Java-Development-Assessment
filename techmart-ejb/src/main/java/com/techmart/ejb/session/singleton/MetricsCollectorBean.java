@@ -35,12 +35,14 @@ public class MetricsCollectorBean {
         logAllMetrics();
     }
 
-    @Lock(LockType.WRITE) // Exclusive lock for updates
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
+    @Lock(LockType.WRITE)
     public void recordSuccess(String metricName, long executionTimeMs) {
         MetricData data = metricsMap.computeIfAbsent(metricName, k -> new MetricData(metricName));
         data.recordSuccess(executionTimeMs);
     }
 
+    @TransactionAttribute(TransactionAttributeType.NOT_SUPPORTED)
     @Lock(LockType.WRITE)
     public void recordFailure(String metricName, long executionTimeMs) {
         MetricData data = metricsMap.computeIfAbsent(metricName, k -> new MetricData(metricName));

@@ -156,51 +156,6 @@ public class InventoryManagerBean {
         return allAllocations;
     }
 
-    //TODO: CHECK THIS AGAIN -> it can edit batches which arent exactly in orderitemallocation
-    @Lock(LockType.WRITE)
-    @TransactionAttribute(TransactionAttributeType.REQUIRED)
-    public void confirmReservation(Long productId, Long warehouseId, int quantity) {
-//        Inventory inventory = findInventory(productId, warehouseId);
-//        if (inventory == null) {
-//            throw new IllegalStateException("Inventory not found for product " + productId + " at warehouse " + warehouseId);
-//        }
-//
-//        inventory.confirmReservation(quantity);
-//        entityManager.merge(inventory);
-//
-//        // ✅ Update BATCH: receivedQuantity -= qty, reservedQuantity -= qty
-//        // Find the batches that have reservations for this product at this warehouse
-//        List<InventoryBatch> reservedBatches = entityManager.createQuery(
-//                        "SELECT b FROM InventoryBatch b " +
-//                                "WHERE b.inventory.id = :invId AND b.reservedQuantity > 0 " +
-//                                "ORDER BY b.costPrice ASC, b.receivedDate ASC",
-//                        InventoryBatch.class)
-//                .setParameter("invId", inventory.getId())
-//                .getResultList();
-//
-//        int remainingToConfirm = quantity;
-//        for (InventoryBatch batch : reservedBatches) {
-//            if (remainingToConfirm <= 0) break;
-//
-//            int confirmFromBatch = Math.min(batch.getReservedQuantity(), remainingToConfirm);
-//            batch.confirmReservation(confirmFromBatch);
-//            entityManager.merge(batch);
-//            remainingToConfirm -= confirmFromBatch;
-//        }
-//
-//        if (remainingToConfirm > 0) {
-//            throw new IllegalStateException(
-//                    "Could not confirm full quantity. Remaining: " + remainingToConfirm
-//            );
-//        }
-//
-//        // Update cache
-//        updateCache(productId, warehouseId, inventory.getAvailableQuantity());
-//
-//        // Publish JMS event
-//        publishInventoryUpdate(productId, warehouseId, -quantity, "ORDER_CONFIRMED", null);
-    }
-
     @Lock(LockType.WRITE)
     @TransactionAttribute(TransactionAttributeType.REQUIRED)
     public void releaseReservation(Long productId, Long warehouseId, int quantity) {
@@ -305,12 +260,6 @@ public class InventoryManagerBean {
     private void updateCache(Long productId, Long warehouseId, int newQuantity) {
         String key = buildCacheKey(productId, warehouseId);
         stockCache.put(key, newQuantity);
-    }
-
-    private void refreshBatchCache(Long productId) {
-        // Simple cache refresh for the specific product
-        batchCache.remove(productId);
-        loadBatchCache(); // In production, optimize this to only reload the specific product
     }
 
     private String buildCacheKey(Long productId, Long warehouseId) {

@@ -23,18 +23,4 @@ public record ProductDTO(
             throw new IllegalArgumentException("Selling price must be positive");
         }
     }
-
-//    /**
-//     * Check if product is in stock (any warehouse).
-//     */
-//    public boolean isInStock() {
-//        return totalStock != null && totalStock > 0;
-//    }
-//
-//    /**
-//     * Check if product is low stock (for UI warnings).
-//     */
-//    public boolean isLowStock(int threshold) {
-//        return totalStock != null && totalStock > 0 && totalStock <= threshold;
-//    }
 }

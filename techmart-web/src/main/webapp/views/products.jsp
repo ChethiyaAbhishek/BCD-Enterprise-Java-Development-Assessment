@@ -15,9 +15,9 @@
 <nav class="navbar navbar-expand-lg navbar-dark bg-primary">
     <div class="navbar-nav ms-auto">
         <a class="nav-link" href="cart.jsp">Cart <span id="cart-count" class="badge bg-danger">0</span></a>
-        <a class="nav-link" href="order-history.jsp">📦 My Orders</a>
+        <a class="nav-link" href="order-history.jsp">My Orders</a>
         <a class="nav-link" href="admin-dashboard.jsp">Admin</a>
-        <a class="nav-link" href="performance-dashboard.jsp">📊 Performance</a>
+        <a class="nav-link" href="performance-dashboard.jsp">Performance</a>
     </div>
 </nav>
 
@@ -39,9 +39,7 @@
 </div>
 
 <script>
-    // Load products via AJAX
     async function loadProducts(category = '') {
-        // ✅ FIX 1: Escape the $ in the URL template literal
         const url = category
             ? `/techmart-web/api/products?category=\${encodeURIComponent(category)}`
             : '/techmart-web/api/products';

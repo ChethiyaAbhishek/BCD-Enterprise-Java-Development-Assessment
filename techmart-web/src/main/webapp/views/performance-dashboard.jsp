@@ -23,13 +23,13 @@
 <body class="bg-light">
 <nav class="navbar navbar-dark bg-dark">
     <div class="container-fluid">
-        <a class="navbar-brand" href="performance-dashboard.jsp">📊 Performance Dashboard</a>
+        <a class="navbar-brand" href="performance-dashboard.jsp">Performance Dashboard</a>
         <div class="navbar-nav ms-auto flex-row align-items-center">
                 <span class="nav-link text-light">
                     Uptime: <strong id="uptime">--</strong> |
                     Methods Monitored: <strong id="method-count">--</strong>
                 </span>
-            <button id="poll-toggle" class="btn btn-sm btn-outline-light ms-2">⏸ Pause</button>
+            <button id="poll-toggle" class="btn btn-sm btn-outline-light ms-2">Pause</button>
         </div>
     </div>
 </nav>
@@ -78,7 +78,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">📈 Response Time Trend (Last 20 polls)</h5>
+                    <h5 class="mb-0">Response Time Trend (Last 20 polls)</h5>
                 </div>
                 <div class="card-body">
                     <div class="chart-container">
@@ -90,7 +90,7 @@
         <div class="col-md-6">
             <div class="card">
                 <div class="card-header">
-                    <h5 class="mb-0">📊 Invocation Count by Method</h5>
+                    <h5 class="mb-0">Invocation Count by Method</h5>
                 </div>
                 <div class="card-body">
                     <div class="chart-container">
@@ -103,7 +103,7 @@
 
     <div class="card">
         <div class="card-header d-flex justify-content-between align-items-center">
-            <h5 class="mb-0">📋 Detailed Method Metrics</h5>
+            <h5 class="mb-0">Detailed Method Metrics</h5>
             <span class="badge bg-secondary" id="last-update">Last updated: --</span>
         </div>
         <div class="card-body p-0">
@@ -128,36 +128,6 @@
                     <tr><td colspan="11" class="text-center py-4">Loading metrics...</td></tr>
                     </tbody>
                 </table>
-            </div>
-        </div>
-    </div>
-
-    <div class="card mt-4">
-        <div class="card-header bg-info text-white">
-            <h5 class="mb-0">✅ Assessment Requirements Coverage</h5>
-        </div>
-        <div class="card-body">
-            <div class="row">
-                <div class="col-md-6">
-                    <h6>Performance Monitoring</h6>
-                    <ul class="list-unstyled">
-                        <li>✅ Real-time method execution tracking</li>
-                        <li>✅ Response time metrics (avg/min/max/P95/P99)</li>
-                        <li>✅ Throughput measurement (req/s)</li>
-                        <li>✅ Error rate monitoring</li>
-                        <li>✅ Health status indicators</li>
-                    </ul>
-                </div>
-                <div class="col-md-6">
-                    <h6>Architecture Features</h6>
-                    <ul class="list-unstyled">
-                        <li>✅ AOP Interceptor-based monitoring</li>
-                        <li>✅ Singleton metrics collector</li>
-                        <li>✅ REST API for metrics exposure</li>
-                        <li>✅ AJAX polling for live updates</li>
-                        <li>✅ Chart.js visualizations</li>
-                    </ul>
-                </div>
             </div>
         </div>
     </div>

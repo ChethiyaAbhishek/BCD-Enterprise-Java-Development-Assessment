@@ -24,7 +24,7 @@ public class CircuitBreaker {
     private final AtomicInteger successCount = new AtomicInteger(0);
     private volatile Instant lastFailureTime;
 
-    // for monitoring
+    // monitoring
     private volatile long totalRequests = 0;
     private volatile long totalFailures = 0;
     private volatile long totalRejected = 0;

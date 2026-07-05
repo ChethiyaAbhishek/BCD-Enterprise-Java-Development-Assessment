@@ -38,15 +38,4 @@ public record NotificationDTO(
             createdAt = LocalDateTime.now();
         }
     }
-
-    public boolean requiresEmail() {
-        return customerEmail != null && !customerEmail.isBlank();
-    }
-
-    public boolean requiresSms() {
-        return customerPhone != null && !customerPhone.isBlank()
-                && (type == NotificationType.ORDER_CONFIRMATION
-                || type == NotificationType.ORDER_SHIPPED
-                || type == NotificationType.PAYMENT_FAILED);
-    }
 }

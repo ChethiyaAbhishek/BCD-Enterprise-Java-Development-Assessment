@@ -4,6 +4,8 @@ import com.techmart.common.dto.ProductDTO;
 import com.techmart.common.entity.Product;
 import com.techmart.ejb.dao.InventoryDAO;
 import com.techmart.ejb.dao.ProductDAO;
+import com.techmart.ejb.interceptor.PerformanceMonitored;
+import com.techmart.ejb.session.singleton.ProductCacheBean;
 import jakarta.ejb.*;
 import jakarta.inject.Inject;
 import lombok.extern.java.Log;
@@ -13,6 +15,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Stateless
+@PerformanceMonitored
 @TransactionManagement(TransactionManagementType.CONTAINER)
 @Log
 public class ProductServiceBean {
@@ -23,8 +26,18 @@ public class ProductServiceBean {
     @Inject
     private InventoryDAO inventoryDAO;
 
+    @Inject
+    private ProductCacheBean productCache;
+
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<ProductDTO> getProducts(int page, int pageSize, String category) {
+
+        List<ProductDTO> cached = productCache.getProducts(page, pageSize, category);
+        if (cached != null && !cached.isEmpty()) {
+            return cached;
+        }
+        log.warning("Cache returned empty - falling back to database");
+
         List<Product> products;
 
         if (category != null && !category.isBlank()) {
@@ -65,7 +78,6 @@ public class ProductServiceBean {
         log.info("Product updated: " + productId);
         return mapToProductDTO(product);
     }
-
 
 
     private ProductDTO mapToProductDTO(@NonNull Product product) {

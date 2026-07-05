@@ -61,9 +61,9 @@
         </div>
         <div class="card-body">
             <div class="d-grid gap-2 d-md-flex">
-                <a href="performance-dashboard.jsp" class="btn btn-outline-primary">📊 View Performance Metrics</a>
-                <a href="products.jsp" class="btn btn-outline-secondary">🛍️ View Products</a>
-                <button class="btn btn-outline-success" onclick="loadDashboard()">🔄 Refresh Dashboard</button>
+                <a href="performance-dashboard.jsp" class="btn btn-outline-primary">View Performance Metrics</a>
+                <a href="products.jsp" class="btn btn-outline-secondary">View Products</a>
+                <button class="btn btn-outline-success" onclick="loadDashboard()">Refresh Dashboard</button>
             </div>
         </div>
     </div>

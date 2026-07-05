@@ -180,7 +180,7 @@ public class OrderProcessingBean {
     }
 
     /**
-     * Get order history for a customer (paginated for performance).
+     * Get order history for a customer (paginated for performance)
      */
     @TransactionAttribute(TransactionAttributeType.SUPPORTS)
     public List<OrderDTO> getCustomerOrders(Long customerId, int page, int pageSize) {

@@ -30,31 +30,4 @@ public record PerformanceMetricDTO(
             lastUpdated = LocalDateTime.now();
         }
     }
-
-    /**
-     * Check if this method has acceptable performance (< 100ms avg).
-     */
-    public boolean isPerformant() {
-        return avgResponseTimeMs < 100.0;
-    }
-
-    /**
-     * Check if error rate is within acceptable limits (< 1%).
-     */
-    public boolean hasAcceptableErrorRate() {
-        return errorRatePercent < 1.0;
-    }
-
-    /**
-     * Get health status based on performance and error rate.
-     */
-    public String getHealthStatus() {
-        if (errorRatePercent > 5.0 || avgResponseTimeMs > 1000.0) {
-            return "CRITICAL";
-        } else if (errorRatePercent > 1.0 || avgResponseTimeMs > 500.0) {
-            return "WARNING";
-        } else {
-            return "HEALTHY";
-        }
-    }
 }

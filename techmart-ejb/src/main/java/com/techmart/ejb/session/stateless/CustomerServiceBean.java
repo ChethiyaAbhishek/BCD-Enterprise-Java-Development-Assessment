@@ -76,8 +76,6 @@ public class CustomerServiceBean {
         return customerDAO.update(customer);
     }
 
-
-
     private String hashPassword(@NonNull String password) {
         try {
             MessageDigest digest = MessageDigest.getInstance("SHA-256");

@@ -2,7 +2,7 @@ package com.techmart.web.servlet;
 
 import com.techmart.common.dto.PerformanceMetricDTO;
 import com.techmart.ejb.session.singleton.MetricsCollectorBean;
-import jakarta.ejb.EJB;  // ✅ Change from @Inject to @EJB
+import jakarta.ejb.EJB;
 import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
